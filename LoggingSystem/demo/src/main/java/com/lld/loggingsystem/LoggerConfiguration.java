@@ -6,48 +6,48 @@ import lombok.Getter;
 
 public class LoggerConfiguration {
     @Getter
-    private static ILoggerLevel loggerLevel;
+    private static ILogMessageHandler logmsgHandler;
     @Getter
-    private static ISink sink;
-    private static HashMap<LogLevel,ILoggerLevel> loggerLevelMap;
-    private static HashMap<SinkType,ISink> sinkMap;
+    private static ILogMessagePrinter logMessagePrinter;
+    private static HashMap<LogLevel,ILogMessageHandler> logmsgHandlerMap;
+    private static HashMap<PrinterType,ILogMessagePrinter> logMessagePrinterMap;
 
     private LoggerConfiguration() {
 
     }
 
-    public static void setLoggerLevel(LogLevel logLevel) {
-        loggerLevel = loggerLevelMap.get(logLevel);
+    public static void setLogMessageHandler(LogLevel logLevel) {
+        logmsgHandler = logmsgHandlerMap.get(logLevel);
     }
 
-    public static void setSink(SinkType sinkType) {
-        sink = sinkMap.get(sinkType);
+    public static void setLogMessagePrinter(PrinterType printerType) {
+        logMessagePrinter = logMessagePrinterMap.get(printerType);
     }
 
-    private static void initSinkMap() {
-        sinkMap = new HashMap<>();
-        sinkMap.put(SinkType.CONSOLE, new ConsoleSink());
-        sink = sinkMap.get(SinkType.CONSOLE);
+    private static void initLogMessagePrinterMap() {
+        logMessagePrinterMap = new HashMap<>();
+        logMessagePrinterMap.put(PrinterType.CONSOLE, new ConsoleLogMessagePrinter());
+        logMessagePrinter = logMessagePrinterMap.get(PrinterType.CONSOLE);
     }
 
-    private static void initLoggerLevelMap() {
-        loggerLevelMap = new HashMap<>();
-        loggerLevelMap.put(LogLevel.VERBOSE, new VerboseLoggerLevel(sink));
-        loggerLevelMap.put(LogLevel.DEBUG, new DebugLoggerLevel(sink));
-        loggerLevelMap.put(LogLevel.INFO, new InfoLoggerLevel(sink));
-        loggerLevelMap.put(LogLevel.ERROR, new ErrorLoggerLevel(sink));
-        loggerLevel = loggerLevelMap.get(LogLevel.INFO);
+    private static void initLogMessageHandlerMap() {
+        logmsgHandlerMap = new HashMap<>();
+        logmsgHandlerMap.put(LogLevel.VERBOSE, new VerboseLogMessageHandler(logMessagePrinter));
+        logmsgHandlerMap.put(LogLevel.DEBUG, new DebugLogMessageHandler(logMessagePrinter));
+        logmsgHandlerMap.put(LogLevel.INFO, new InfoLogMessageHandler(logMessagePrinter));
+        logmsgHandlerMap.put(LogLevel.ERROR, new ErrorLogMessageHandler(logMessagePrinter));
+        logmsgHandler = logmsgHandlerMap.get(LogLevel.INFO);
     }
 
     private static void configureNextLoggerhandler() {
-        loggerLevelMap.get(LogLevel.VERBOSE).setNextLogger(loggerLevelMap.get(LogLevel.DEBUG));
-        loggerLevelMap.get(LogLevel.DEBUG).setNextLogger(loggerLevelMap.get(LogLevel.INFO));
-        loggerLevelMap.get(LogLevel.INFO).setNextLogger(loggerLevelMap.get(LogLevel.ERROR));
+        logmsgHandlerMap.get(LogLevel.VERBOSE).setNextLogMessageHandler(logmsgHandlerMap.get(LogLevel.DEBUG));
+        logmsgHandlerMap.get(LogLevel.DEBUG).setNextLogMessageHandler(logmsgHandlerMap.get(LogLevel.INFO));
+        logmsgHandlerMap.get(LogLevel.INFO).setNextLogMessageHandler(logmsgHandlerMap.get(LogLevel.ERROR));
     }
 
     public static void initLoggerConfiguration() {
-        initSinkMap();
-        initLoggerLevelMap();
+        initLogMessagePrinterMap();
+        initLogMessageHandlerMap();
         configureNextLoggerhandler();
     }
 }

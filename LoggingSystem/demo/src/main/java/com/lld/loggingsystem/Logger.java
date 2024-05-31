@@ -1,10 +1,10 @@
 package com.lld.loggingsystem;
 
 public class Logger {
-    private ILoggerLevel loggerLevel;
+    private ILogMessageHandler logmsgHandler;
     private static Logger loggerSingleton;
     private Logger() {
-        loggerLevel = LoggerConfiguration.getLoggerLevel();
+        logmsgHandler = LoggerConfiguration.getLogmsgHandler();
     }
 
     public static Logger getInstance() {
@@ -19,6 +19,6 @@ public class Logger {
     }
 
     public void logMessage(Message message) {
-        loggerLevel.logMessage(message);
+        logmsgHandler.logMessage(message);
     }
 }

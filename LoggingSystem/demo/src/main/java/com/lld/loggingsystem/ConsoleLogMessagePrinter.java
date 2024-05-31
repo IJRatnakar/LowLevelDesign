@@ -3,10 +3,10 @@ package com.lld.loggingsystem;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ConsoleSink implements ISink {
+public class ConsoleLogMessagePrinter implements ILogMessagePrinter {
 
     @Override
-    public void logMessageToSink(Message message) {
+    public void printMessage(Message message) {
         LocalDateTime myDateObj = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = myDateObj.format(myFormatObj);
